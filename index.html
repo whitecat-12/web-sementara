@@ -140,8 +140,44 @@
         </div>
     </div>
     
-k
+<script>
+    var map = L.map('map').setView([-6.9055, 109.1852], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    function updateCircle() {
+        let aqi = Math.floor(Math.random() * 150) + 50; // Simulasi AQI antara 50 - 200
+        let color = "#FFFF00"; // Warna selalu kuning
+        let emoji = aqi <= 50 ? '😊' : aqi <= 100 ? '😐' : aqi <= 150 ? '😷' : '🚨';
+
+        // Hapus lingkaran lama jika ada
+        if (window.aqiCircle) {
+            map.removeLayer(window.aqiCircle);
+        }
+
+        // Tambahkan lingkaran baru
+        window.aqiCircle = L.circle([-6.9055, 109.1852], {
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.5,
+            radius: aqi * 10 // Radius berdasarkan AQI
+        }).addTo(map);
+
+        // Perbarui popup pada marker dengan AQI terbaru
+        window.aqiMarker.setPopupContent(`Pangkah, Tegal<br>AQI: ${aqi} ${emoji}`).openPopup();
+    }
+
+    // Tambahkan marker untuk Pangkah, Tegal
+    window.aqiMarker = L.marker([-6.9055, 109.1852])
+        .addTo(map)
+        .bindPopup('Pangkah, Tegal<br>AQI: --')
+        .openPopup();
+
+    updateCircle(); // Panggil pertama kali
+    setInterval(updateCircle, 1000); // Perbarui setiap 1 detik
 </script>
+
 
 
 </body>
