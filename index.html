@@ -80,17 +80,21 @@
 		.unhealthy { background: #ff5e62; color: white; }
 
 		.map-container {
-			margin-top: 20px;
 			width: 100%;
-			height: 400px;
+			max-width: 1150px; /* Sesuaikan dengan desain utama */
+			height: 400px; /* Sesuaikan tinggi */
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Tambahkan efek bayangan */
+			margin: 20px auto; /* Pusatkan secara horizontal */
 		}
 
 		#map {
 			width: 100%;
-			height: 400px;
+			height: 100%;
 			border-radius: 12px;
-			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 		}
+		
 		.face-icon {
 			width: 50px; /* Sesuaikan ukuran */
 			height: 50px;
@@ -100,23 +104,29 @@
 		}
 		
 		.chart-container {
-        margin-top: 20px;
-        width: 100%;
-        height: 300px;
+			margin-top: 20px;
+			width: 100%;
+			height: 300px;
+			background: white;
+			padding: 15px;
+			border-radius: 12px;
+			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
 		}
 
 		#aqiChart {
 			width: 100%;
 			height: 100%;
 		}
+
 		
         .forecast-container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-            max-width: 1150px;
-            width: 100%;
+			idth: 85%;
+			max-width: 1200px;
+			margin: 40px auto;
+			background: white;
+			padding: 30px;
+			border-radius: 12px;
+			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
         }
         .forecast-table {
             width: 100%;
@@ -200,46 +210,47 @@
                 <th>Angin</th>
                 <th>Kelembaban</th>
             </tr>
-            <tr>
-                <td>Hari ini</td>
-                <td><span class="aqi-badge moderate">62</span></td>
-                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
-                <td>30°C</td>
-                <td>14 km/h</td>
-                <td>61%</td>
-            </tr>
-            <tr>
-                <td>Sen</td>
-                <td><span class="aqi-badge moderate">61</span></td>
-                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
-                <td>32°C</td>
-                <td>18 km/h</td>
-                <td>53%</td>
-            </tr>
-            <tr>
-                <td>Sel</td>
-                <td><span class="aqi-badge moderate">63</span></td>
-                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
-                <td>30°C</td>
-                <td>10 km/h</td>
-                <td>59%</td>
-            </tr>
-            <tr>
-                <td>Rab</td>
-                <td><span class="aqi-badge moderate">64</span></td>
-                <td><i class="fas fa-cloud-showers-heavy"></i> 80%</td>
-                <td>27°C</td>
-                <td>7 km/h</td>
-                <td>80%</td>
-            </tr>
-            <tr>
-                <td>Kam</td>
-                <td><span class="aqi-badge moderate">65</span></td>
-                <td><i class="fas fa-cloud-showers-heavy"></i> 64%</td>
-                <td>29°C</td>
-                <td>18 km/h</td>
-                <td>64%</td>
-            </tr>
+           <tr>
+				<td>Hari ini</td>
+				<td><span class="aqi-badge moderate">62</span></td>
+				<td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+				<td>30°C</td>
+				<td>14 km/h</td>
+				<td><i class="fas fa-tint"></i> 61%</td>
+			</tr>
+			<tr>
+				<td>Sen</td>
+				<td><span class="aqi-badge moderate">61</span></td>
+				<td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+				<td>32°C</td>
+				<td>18 km/h</td>
+				<td><i class="fas fa-tint"></i> 53%</td>
+			</tr>
+			<tr>
+				<td>Sel</td>
+				<td><span class="aqi-badge moderate">63</span></td>
+				<td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+				<td>30°C</td>
+				<td>10 km/h</td>
+				<td><i class="fas fa-tint"></i> 59%</td>
+			</tr>
+			<tr>
+				<td>Rab</td>
+				<td><span class="aqi-badge moderate">64</span></td>
+				<td><i class="fas fa-cloud-showers-heavy"></i> 80%</td>
+				<td>27°C</td>
+				<td>7 km/h</td>
+				<td><i class="fas fa-tint"></i> 80%</td>
+			</tr>
+			<tr>
+				<td>Kam</td>
+				<td><span class="aqi-badge moderate">65</span></td>
+				<td><i class="fas fa-cloud-showers-heavy"></i> 64%</td>
+				<td>29°C</td>
+				<td>18 km/h</td>
+				<td><i class="fas fa-tint"></i> 64%</td>
+			</tr>
+
         </table>
 				
         </div>
@@ -253,40 +264,53 @@
     
 <script>
 
-			// === CHART.JS (Grafik AQI) ===
-		const ctx = document.getElementById('aqiChart').getContext('2d');
+		
+    var ctx = document.getElementById('aqiChart').getContext('2d');
 
-		const aqiChart = new Chart(ctx, {
-			type: 'line',
-			data: {
-				labels: ['12:00', '16:00', '23:00'],
-				datasets: [{
-					label: 'AQI',
-					data: [62, 61, 61], // Sesuaikan dengan data yang tersedia
-					borderColor: '#ff5e62',
-					backgroundColor: 'rgba(255, 94, 98, 0.2)',
-					borderWidth: 2,
-					fill: true
-				}]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				scales: {
-					y: {
-						beginAtZero: false
-					}
-				}
-			}
-		}); // <-- Tambahkan penutupan kurung di sini
+    var dataAqi = [20, 30, 25, 40, 60, 80, 100, 120, 130, 110, 90, 70, 50, 30, 20];
+    var labels = ['19:00', '01:00', '07:00', '13:00', '19:00', '01:00', '07:00', '13:00'];
+
+    var backgroundColors = dataAqi.map(value => {
+        if (value < 50) return '#FFD700'; // Kuning
+        if (value < 100) return '#FFA500'; // Oranye
+        return '#FF6347'; // Merah
+    });
+
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'µg/m³',
+                data: dataAqi,
+                backgroundColor: backgroundColors,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 150,
+                    ticks: {
+                        stepSize: 30
+                    }
+                }
+            }
+        }
+    });
 
 		// === LEAFLET.JS (Peta AQI) ===
 		// === LEAFLET.JS (Peta AQI) ===
-		var map = L.map('map').setView([-6.9055, 109.1852], 13);
+		var map = L.map('map', {
+		attributionControl: false // Menonaktifkan attribution bawaan
+			}).setView([-6.9055, 109.1852], 13);
 
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; OpenStreetMap contributors'
-		}).addTo(map);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				// Hapus 'attribution' di sini agar tidak ditampilkan
+			}).addTo(map);
 
 		// Variabel untuk menyimpan status AQI saat ini
 		let currentAQI = 62;
