@@ -7,7 +7,8 @@
     <title>Kualitas Udara Kota Sidoarjo</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-	
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
 	
 	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
@@ -90,6 +91,55 @@
 			border-radius: 12px;
 			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 		}
+		.face-icon {
+			width: 50px; /* Sesuaikan ukuran */
+			height: 50px;
+			stroke: white !important;
+			vertical-align: middle
+			
+		}
+		
+		.chart-container {
+        margin-top: 20px;
+        width: 100%;
+        height: 300px;
+		}
+
+		#aqiChart {
+			width: 100%;
+			height: 100%;
+		}
+		
+        .forecast-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .forecast-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .forecast-table th, .forecast-table td {
+            padding: 12px;
+            text-align: center;
+        }
+        .forecast-table th {
+            background: #f8f9fa;
+        }
+        .aqi-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+        }
+        .good { background: #85c990; }
+        .moderate { background: #f9e79f; color: black; }
+        .unhealthy { background: #ff5e62; }
+		
     </style>
 </head>
 <body>
@@ -97,7 +147,11 @@
         <div class="header">
             <h2>Kualitas Udara di Kota Tegal</h2>
             <div class="status">
-                <h3>61 AQI 😐</h3>
+				<h3>61 AQI  
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="face-icon">
+				  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9.75h.008v.008h-.008V9.75zm-7.5 0h.008v.008h-.008V9.75zM12 17.25a4.5 4.5 0 004.5-4.5h-9a4.5 4.5 0 004.5 4.5zM12 3.75a8.25 8.25 0 00-8.25 8.25 8.25 8.25 0 1016.5 0 8.25 8.25 0 00-8.25-8.25z" />
+				</svg>
+				</h3>
                 <p>Relatif cukup sehat</p>
                 <p>Polutan utama: PM2.5 (43 µg/m³)</p>
             </div>
@@ -134,48 +188,143 @@
                     <td>94%</td>
                 </tr>
             </table>
+			
+			 <div class="forecast-container">
+        <table class="forecast-table">
+            <tr>
+                <th>Hari</th>
+                <th>AQI</th>
+                <th>Cuaca</th>
+                <th>Suhu</th>
+                <th>Angin</th>
+                <th>Kelembaban</th>
+            </tr>
+            <tr>
+                <td>Hari ini</td>
+                <td><span class="aqi-badge moderate">62</span></td>
+                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+                <td>30°C</td>
+                <td>14 km/h</td>
+                <td>61%</td>
+            </tr>
+            <tr>
+                <td>Sen</td>
+                <td><span class="aqi-badge moderate">61</span></td>
+                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+                <td>32°C</td>
+                <td>18 km/h</td>
+                <td>53%</td>
+            </tr>
+            <tr>
+                <td>Sel</td>
+                <td><span class="aqi-badge moderate">63</span></td>
+                <td><i class="fas fa-cloud-showers-heavy"></i> 100%</td>
+                <td>30°C</td>
+                <td>10 km/h</td>
+                <td>59%</td>
+            </tr>
+            <tr>
+                <td>Rab</td>
+                <td><span class="aqi-badge moderate">64</span></td>
+                <td><i class="fas fa-cloud-showers-heavy"></i> 80%</td>
+                <td>27°C</td>
+                <td>7 km/h</td>
+                <td>80%</td>
+            </tr>
+            <tr>
+                <td>Kam</td>
+                <td><span class="aqi-badge moderate">65</span></td>
+                <td><i class="fas fa-cloud-showers-heavy"></i> 64%</td>
+                <td>29°C</td>
+                <td>18 km/h</td>
+                <td>64%</td>
+            </tr>
+        </table>
+				
         </div>
         <div class="map-container">
             <div id="map"></div>
         </div>
+		<div class="chart-container">
+    <canvas id="aqiChart"></canvas>
+		</div>
     </div>
     
 <script>
-    var map = L.map('map').setView([-6.9055, 109.1852], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
 
-    function updateCircle() {
-        let aqi = Math.floor(Math.random() * 150) + 50; // Simulasi AQI antara 50 - 200
-        let color = "#FFFF00"; // Warna selalu kuning
-        let emoji = aqi <= 50 ? '😊' : aqi <= 100 ? '😐' : aqi <= 150 ? '😷' : '🚨';
+			// === CHART.JS (Grafik AQI) ===
+		const ctx = document.getElementById('aqiChart').getContext('2d');
 
-        // Hapus lingkaran lama jika ada
-        if (window.aqiCircle) {
-            map.removeLayer(window.aqiCircle);
-        }
+		const aqiChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: ['12:00', '16:00', '23:00'],
+				datasets: [{
+					label: 'AQI',
+					data: [62, 61, 61], // Sesuaikan dengan data yang tersedia
+					borderColor: '#ff5e62',
+					backgroundColor: 'rgba(255, 94, 98, 0.2)',
+					borderWidth: 2,
+					fill: true
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				scales: {
+					y: {
+						beginAtZero: false
+					}
+				}
+			}
+		}); // <-- Tambahkan penutupan kurung di sini
 
-        // Tambahkan lingkaran baru
-        window.aqiCircle = L.circle([-6.9055, 109.1852], {
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.5,
-            radius: aqi * 10 // Radius berdasarkan AQI
-        }).addTo(map);
+		// === LEAFLET.JS (Peta AQI) ===
+		// === LEAFLET.JS (Peta AQI) ===
+		var map = L.map('map').setView([-6.9055, 109.1852], 13);
 
-        // Perbarui popup pada marker dengan AQI terbaru
-        window.aqiMarker.setPopupContent(`Pangkah, Tegal<br>AQI: ${aqi} ${emoji}`).openPopup();
-    }
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; OpenStreetMap contributors'
+		}).addTo(map);
 
-    // Tambahkan marker untuk Pangkah, Tegal
-    window.aqiMarker = L.marker([-6.9055, 109.1852])
-        .addTo(map)
-        .bindPopup('Pangkah, Tegal<br>AQI: --')
-        .openPopup();
+		// Variabel untuk menyimpan status AQI saat ini
+		let currentAQI = 62;
 
-    updateCircle(); // Panggil pertama kali
-    setInterval(updateCircle, 1000); // Perbarui setiap 1 detik
+		function updateCircle() {
+			// Bergantian antara 62 dan 63 setiap update
+			currentAQI = currentAQI === 62 ? 63 : 62;
+			
+			let color = "#FFFF00"; // Warna tetap kuning
+			let emoji = '😐'; // Emoji tetap sesuai AQI
+
+			// Hapus lingkaran lama jika ada
+			if (window.aqiCircle) {
+				map.removeLayer(window.aqiCircle);
+			}
+
+			// Tambahkan lingkaran baru dengan ukuran tetap
+			window.aqiCircle = L.circle([-6.9055, 109.1852], {
+				color: color,
+				fillColor: color,
+				fillOpacity: 0.5,
+				radius: 1000 // Tetap 1000 meter
+			}).addTo(map);
+
+			// Perbarui popup pada marker dengan AQI terbaru
+			window.aqiMarker.setPopupContent(`Pangkah, Tegal<br>AQI: ${currentAQI} ${emoji}`).openPopup();
+		}
+
+		// Tambahkan marker untuk Pangkah, Tegal
+		window.aqiMarker = L.marker([-6.9055, 109.1852])
+			.addTo(map)
+			.bindPopup('Pangkah, Tegal<br>AQI: --')
+			.openPopup();
+
+		updateCircle(); // Panggil pertama kali
+		setInterval(updateCircle, 1000); // Perbarui setiap detik
+
+
+
 </script>
 
 
